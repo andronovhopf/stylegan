@@ -136,6 +136,9 @@ def training_loop(
     resume_run_id           = None,     # Run ID or network pkl to resume training from, None = start from scratch.
     resume_snapshot         = None,     # Snapshot index to resume training from, None = autodetect.
     resume_kimg             = 10000.0,      # Assumed training progress at the beginning. Affects reporting and training schedule.
+#=======
+#    resume_kimg             = 0.0,      # Assumed training progress at the beginning. Affects reporting and training schedule.
+#>>>>>>> b061cc4effdcd1da86a0cc6e61e64b575cf35ffa
     resume_time             = 0.0):     # Assumed wallclock time at the beginning. Affects reporting.
 
     # Initialize dnnlib and TensorFlow.
@@ -152,6 +155,7 @@ def training_loop(
             print('Loading networks from "%s"...' % network_pkl)
             G, D, Gs = misc.load_pkl(network_pkl)
         else:
+#<<<<<<< HEAD
             #print('Constructing networks...')
             #G = tflib.Network('G', num_channels=training_set.shape[0], resolution=training_set.shape[1], label_size=training_set.label_size, **G_args)
             #D = tflib.Network('D', num_channels=training_set.shape[0], resolution=training_set.shape[1], label_size=training_set.label_size, **D_args)
@@ -160,6 +164,12 @@ def training_loop(
             with dnnlib.util.open_url(url, cache_dir = config.cache_dir) as f:
             	G, D, Gs = pickle.load(f)
             print('Loading pretrained FFHQ network')
+#=======
+#            print('Constructing networks...')
+#            G = tflib.Network('G', num_channels=training_set.shape[0], resolution=training_set.shape[1], label_size=training_set.label_size, **G_args)
+#            D = tflib.Network('D', num_channels=training_set.shape[0], resolution=training_set.shape[1], label_size=training_set.label_size, **D_args)
+#            Gs = G.clone('Gs')
+#>>>>>>> b061cc4effdcd1da86a0cc6e61e64b575cf35ffa
     G.print_layers(); D.print_layers()
 
     print('Building TensorFlow graph...')

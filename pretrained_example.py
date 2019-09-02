@@ -31,7 +31,11 @@ def main():
     Gs.print_layers()
 
     # Pick latent vector.
-    rnd = np.random.RandomState(6)
+#<<<<<<< HEAD
+#    rnd = np.random.RandomState(6)
+#=======
+    rnd = np.random.RandomState(5)
+#>>>>>>> b061cc4effdcd1da86a0cc6e61e64b575cf35ffa
     latents = rnd.randn(1, Gs.input_shape[1])
 
     # Generate image.
