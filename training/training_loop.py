@@ -19,7 +19,7 @@ import train
 from training import dataset
 from training import misc
 from metrics import metric_base
-
+import subprocess
 #----------------------------------------------------------------------------
 # Just-in-time processing of training images before feeding them to the networks.
 
@@ -203,6 +203,10 @@ def training_loop(
     print('Setting up run dir...')
     misc.save_image_grid(grid_reals, os.path.join(submit_config.run_dir, 'reals.png'), drange=training_set.dynamic_range, grid_size=grid_size)
     misc.save_image_grid(grid_fakes, os.path.join(submit_config.run_dir, 'fakes%06d.png' % resume_kimg), drange=drange_net, grid_size=grid_size)
+
+    cmd = "gsutil cp " + os.path.join(submit_config.run_dir, 'fakes%06d.png' % resume_kimg) + "  gs://stylegan_out"
+    response = subprocess.run(cmd, shell = True)
+
     summary_log = tf.summary.FileWriter(submit_config.run_dir)
     if save_tf_graph:
         summary_log.add_graph(tf.get_default_graph())
@@ -262,6 +266,8 @@ def training_loop(
             if cur_tick % image_snapshot_ticks == 0 or done:
                 grid_fakes = Gs.run(grid_latents, grid_labels, is_validation=True, minibatch_size=sched.minibatch//submit_config.num_gpus)
                 misc.save_image_grid(grid_fakes, os.path.join(submit_config.run_dir, 'fakes%06d.png' % (cur_nimg // 1000)), drange=drange_net, grid_size=grid_size)
+                cmd = "gsutil cp " + os.path.join(submit_config.run_dir, 'fakes%06d.png' % (cur_nimg //1000)) + "  gs://stylegan_out"
+                response = subprocess.run(cmd, shell = True)
             if cur_tick % network_snapshot_ticks == 0 or done or cur_tick == 1:
                 pkl = os.path.join(submit_config.run_dir, 'network-snapshot-%06d.pkl' % (cur_nimg // 1000))
                 misc.save_pkl((G, D, Gs), pkl)

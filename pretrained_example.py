@@ -14,6 +14,7 @@ import PIL.Image
 import dnnlib
 import dnnlib.tflib as tflib
 import config
+import subprocess
 
 def main():
     # Initialize TensorFlow.
@@ -43,5 +44,8 @@ def main():
     png_filename = os.path.join(config.result_dir, 'example.png')
     PIL.Image.fromarray(images[0], 'RGB').save(png_filename)
 
+    # Send that image to our bucket
+    cmd = "gsutil cp " + png_filename + "  gs://stylegan_out"
+    response = subprocess.run(cmd, shell = True)
 if __name__ == "__main__":
     main()
